@@ -33,7 +33,7 @@ class QuanLySinhVien:
         if (sv != None):
             name = input("Nhap ten sinh vien: ")
             sex = input("Nhap gioi tinh sinh vien: ")
-            major = int(input("Nhap chuyen6 nganh của sinh vien: "))
+            major = input("Nhap chuyen nganh của sinh vien: ")
             diemTB = float(input("Nhap diem cua sinh vien: "))
 
             sv._name = name
