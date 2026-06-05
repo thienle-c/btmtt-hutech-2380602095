@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kết quả Playfair Cipher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body { background-color: #f8f9fa; padding-top: 30px; }
+        .matrix-table {
+            margin: 20px auto;
+            border: 3px solid #343a40;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .matrix-table td {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            vertical-align: middle !important;
+            font-weight: bold;
+            font-size: 18px;
+            border: 2px solid #343a40;
+            background-color: #ffffff;
+            color: #007bff;
+        }
+        .result-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="result-box">
+                <h3 class="text-center text-uppercase font-weight-bold text-dark mb-4">{{ title }}</h3>
+                
+                <div class="alert alert-info py-2">
+                    <strong>Sinh viên:</strong> LÊ Minh Thiên | <strong>MSSV:</strong> 2380602095
+                </div>
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th width="30%" class="bg-light">Dữ liệu nhập vào:</th>
+                        <td><strong>{{ original_text }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light">Khóa (Key):</th>
+                        <td><span class="badge badge-warning" style="font-size: 14px;">{{ key }}</span></td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light text-success">Kết quả đầu ra:</th>
+                        <td><h4 class="text-success font-weight-bold mb-0">{{ result_text }}</h4></td>
+                    </tr>
+                </table>
+
+                <hr>
+                <h5 class="text-center font-weight-bold text-secondary mt-3">MA TRẬN PLAYFAIR 5x5 ĐƯỢC TẠO RA:</h5>
+                
+                <table class="matrix-table">
+                    <tbody>
+                        {% for row in matrix %}
+                        <tr>
+                            {% for letter in row %}
+                            <td>{{ letter }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-center mt-4">
+                    <a href="/" class="btn btn-secondary">Quay lại Trang chủ Menu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
