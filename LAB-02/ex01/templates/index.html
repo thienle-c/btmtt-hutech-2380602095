@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Cryptography Intelligence Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg-workspace: #070a13;
+            --sidebar-bg: #0b0f19;
+            --sidebar-active: #1e293b;
+            --accent-academic: #6366f1;
+            --accent-neon: #10b981;
+            --accent-alert: #f43f5e;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-light: #f8fafc;
+            --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-workspace);
+            color: #94a3b8;
+            overflow-x: hidden;
+        }
+
+        /* MATRIX BG EFFECT */
+        #matrixCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        /* SIDEBAR PRO */
+        .sidebar {
+            min-height: 100vh;
+            background-color: var(--sidebar-bg);
+            padding: 24px 16px;
+            border-right: 1px solid #1e293b;
+            backdrop-filter: blur(10px);
+        }
+        .lab-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--accent-neon);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            padding-left: 12px;
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+        .student-profile {
+            background: linear-gradient(135deg, #111827 0%, #030712 100%);
+            border: 1px solid #1e293b;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+        }
+        .nav-pills .nav-link {
+            color: #94a3b8;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 14px;
+            transition: all 0.2s var(--transition-smooth);
+        }
+        .nav-pills .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.02);
+            padding-left: 20px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: #fff;
+            box-shadow: inset 4px 0 0 var(--accent-academic);
+            padding-left: 20px;
+        }
+
+        /* WORKSPACE & TECH CARDS */
+        .main-content { padding: 40px; }
+        .tab-pane {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s var(--transition-smooth), transform 0.3s var(--transition-smooth);
+        }
+        .tab-pane.active { opacity: 1; transform: translateY(0); }
+
+        .workspace-card {
+            background: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+        }
+        .card-academic-header {
+            background: linear-gradient(90deg, #1e1b4b 0%, #0f172a 100%);
+            border-bottom: 1px solid #334155;
+            color: var(--text-light);
+            padding: 20px 28px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .form-control {
+            background-color: rgba(15, 23, 42, 0.8);
+            border: 1px solid #475569;
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 14px;
+            transition: all 0.2s var(--transition-smooth);
+        }
+        .form-control:focus {
+            background-color: #0f172a;
+            color: white;
+            border-color: var(--accent-academic);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
+        }
+        label { color: #cbd5e1; font-weight: 500; font-size: 13px; }
+
+        .btn-encrypt, .btn-decrypt {
+            color: white; border-radius: 8px; width: 100%; font-weight: 600; padding: 12px; border: none;
+            transition: all 0.2s var(--transition-smooth); cursor: pointer;
+        }
+        .btn-encrypt { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); }
+        .btn-decrypt { background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); }
+        .btn-encrypt:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4); }
+        .btn-decrypt:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4); }
+
+        /* OUTPUT TERMINAL MODE */
+        .output-panel {
+            background-color: rgba(9, 13, 22, 0.95);
+            color: #38bdf8;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 24px;
+            border: 1px solid #1e293b;
+            border-left: 4px solid #38bdf8;
+            position: relative;
+            overflow: hidden;
+            display: none;
+        }
+        .output-label { color: #475569; font-size: 11px; text-transform: uppercase; font-family: 'Inter'; font-weight: 600; letter-spacing: 0.5px;}
+
+        /* CYBER SCANNER BEAM ANIMATION */
+        .scanning::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(to right, transparent, var(--accent-neon), transparent);
+            animation: scan 1.2s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        /* SIDE PANELS */
+        .analytics-card {
+            background-color: rgba(17, 24, 39, 0.8);
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ENTROPY METER */
+        .entropy-progress {
+            height: 6px; background-color: #1f2937; border-radius: 3px; overflow: hidden; margin-top: 8px;
+        }
+        .entropy-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-alert), var(--accent-neon));
+            transition: width 0.4s ease;
+        }
+
+        /* PLAYFAIR GRID ANIMATION */
+        .matrix-container { display: flex; flex-direction: column; align-items: center; margin-top: 15px; }
+        .playfair-grid { border: 2px solid #475569; border-collapse: collapse; }
+        .playfair-grid td {
+            width: 42px; height: 42px; text-align: center; font-weight: 700;
+            border: 1px solid #475569; background-color: #0f172a; color: #10b981;
+            opacity: 0; transform: scale(0.5);
+            animation: emergeCell 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes emergeCell { to { opacity: 1; transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 col-lg-2 sidebar">
+            <div class="lab-title">Crypto Intel Ops</div>
+            <div class="student-profile">
+                <div style="font-size: 10px; color: #64748b; font-weight: 600; text-transform: uppercase;">System Operator</div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--text-light); margin-top: 2px;">LÊ MINH THIÊN</div>
+                <div style="font-size: 12px; color: var(--accent-neon); font-family: 'JetBrains Mono'; margin-top: 4px;">SEC-ID: 2380602095</div>
+            </div>
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                <a class="nav-link active" id="pills-caesar-tab" data-toggle="pill" href="#pills-caesar" role="tab" onclick="resetMetrics()">Caesar Cipher</a>
+                <a class="nav-link" id="pills-vigenere-tab" data-toggle="pill" href="#pills-vigenere" role="tab" onclick="resetMetrics()">Vigenère Cipher</a>
+                <a class="nav-link" id="pills-railfence-tab" data-toggle="pill" href="#pills-railfence" role="tab" onclick="resetMetrics()">Rail Fence</a>
+                <a class="nav-link" id="pills-playfair-tab" data-toggle="pill" href="#pills-playfair" role="tab" onclick="resetMetrics()">Playfair Cipher</a>
+            </div>
+        </div>
+
+        <div class="col-md-9 col-lg-10 main-content">
+            <div class="row">
+                <div class="col-xl-7">
+                    <div class="tab-content" id="v-pills-tabContent">
+                        
+                        <div class="tab-pane fade show active" id="pills-caesar" role="tabpanel">
+                            <div class="workspace-card card">
+                                <div class="card-academic-header">CIPHER MODULE // CAESAR METRICS</div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6 border-right" style="border-color: #334155 !important;">
+                                            <h6 class="font-weight-bold text-success mb-3">// ENCRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/caesar/encrypt', 'caesar-out')">
+                                                <div class="form-group"><label>Plaintext String</label><input type="text" class="form-control crypto-input" name="inputPlainText" required></div>
+                                                <div class="form-group"><label>Shift Vector (Int)</label><input type="number" class="form-control" name="inputKeyPlain" value="3" required></div>
+                                                <button type="submit" class="btn-encrypt">EXECUTE ATTACH</button>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="font-weight-bold text-info mb-3">// DECRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/caesar/decrypt', 'caesar-out')">
+                                                <div class="form-group"><label>Ciphertext String</label><input type="text" class="form-control crypto-input" name="inputCipherText" required></div>
+                                                <div class="form-group"><label>Shift Vector (Int)</label><input type="number" class="form-control" name="inputKeyCipher" value="3" required></div>
+                                                <button type="submit" class="btn-decrypt">EXECUTE DETACH</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="caesar-out" class="output-panel"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-vigenere" role="tabpanel">
+                            <div class="workspace-card card">
+                                <div class="card-academic-header">CIPHER MODULE // VIGENÈRE POLYALPHABETIC</div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6 border-right" style="border-color: #334155 !important;">
+                                            <h6 class="font-weight-bold text-success mb-3">// ENCRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/vigenere/encrypt', 'vigenere-out')">
+                                                <div class="form-group"><label>Plaintext String</label><input type="text" class="form-control crypto-input" name="inputPlainText" required></div>
+                                                <div class="form-group"><label>Keyword String</label><input type="text" class="form-control vigenere-key-input" name="inputKeyPlain" pattern="[A-Za-z]+" style="text-transform:uppercase" required></div>
+                                                <button type="submit" class="btn-encrypt">EXECUTE ATTACH</button>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="font-weight-bold text-info mb-3">// DECRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/vigenere/decrypt', 'vigenere-out')">
+                                                <div class="form-group"><label>Ciphertext String</label><input type="text" class="form-control crypto-input" name="inputCipherText" required></div>
+                                                <div class="form-group"><label>Keyword String</label><input type="text" class="form-control vigenere-key-input" name="inputKeyCipher" pattern="[A-Za-z]+" style="text-transform:uppercase" required></div>
+                                                <button type="submit" class="btn-decrypt">EXECUTE DETACH</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="vigenere-out" class="output-panel"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-railfence" role="tabpanel">
+                            <div class="workspace-card card">
+                                <div class="card-academic-header">CIPHER MODULE // RAIL FENCE TRANSPOSITION</div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6 border-right" style="border-color: #334155 !important;">
+                                            <h6 class="font-weight-bold text-success mb-3">// ENCRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/railfence/encrypt', 'railfence-out')">
+                                                <div class="form-group"><label>Plaintext String</label><input type="text" class="form-control crypto-input" name="inputPlainText" required></div>
+                                                <div class="form-group"><label>Rails Depth</label><input type="number" class="form-control" name="inputKeyPlain" min="2" value="2" required></div>
+                                                <button type="submit" class="btn-encrypt">EXECUTE ATTACH</button>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="font-weight-bold text-info mb-3">// DECRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/railfence/decrypt', 'railfence-out')">
+                                                <div class="form-group"><label>Ciphertext String</label><input type="text" class="form-control crypto-input" name="inputCipherText" required></div>
+                                                <div class="form-group"><label>Rails Depth</label><input type="number" class="form-control" name="inputKeyCipher" min="2" value="2" required></div>
+                                                <button type="submit" class="btn-decrypt">EXECUTE DETACH</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="railfence-out" class="output-panel"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pills-playfair" role="tabpanel">
+                            <div class="workspace-card card">
+                                <div class="card-academic-header">CIPHER MODULE // PLAYFAIR 5x5 STRUCT</div>
+                                <div class="card-body p-4">
+                                    <div class="row">
+                                        <div class="col-md-6 border-right" style="border-color: #334155 !important;">
+                                            <h6 class="font-weight-bold text-success mb-3">// ENCRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/playfair/encrypt', 'playfair-out', true)">
+                                                <div class="form-group">
+                                                    <label>Plaintext String</label>
+                                                    <input type="text" class="form-control crypto-input playfair-strict-input" name="inputPlainText" pattern="[A-Za-z\s]+" title="Playfair Plaintext chỉ chấp nhận chữ cái, không chứa số" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Matrix Keyword</label>
+                                                    <input type="text" class="form-control playfair-key-input" name="inputKeyPlain" pattern="[A-Za-z]+" title="Từ khóa Playfair chỉ bao gồm chữ cái" required>
+                                                </div>
+                                                <button type="submit" class="btn-encrypt">EXECUTE ATTACH</button>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="font-weight-bold text-info mb-3">// DECRYPTION</h6>
+                                            <form onsubmit="executeCrypto(event, '/api/playfair/decrypt', 'playfair-out', true)">
+                                                <div class="form-group">
+                                                    <label>Ciphertext String</label>
+                                                    <input type="text" class="form-control crypto-input playfair-strict-input" name="inputCipherText" pattern="[A-Za-z\s]+" title="Playfair Ciphertext chỉ chấp nhận chữ cái, không chứa số" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Matrix Keyword</label>
+                                                    <input type="text" class="form-control playfair-key-input" name="inputKeyCipher" pattern="[A-Za-z]+" title="Từ khóa Playfair chỉ bao gồm chữ cái" required>
+                                                </div>
+                                                <button type="submit" class="btn-decrypt">EXECUTE DETACH</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="playfair-out" class="output-panel"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-xl-5">
+                    <div class="analytics-card">
+                        <h6 class="font-weight-bold text-light mb-1" style="font-size: 13px;"><span style="color: var(--accent-alert);">●</span> SHANNON ENTROPY ASSESSMENT</h6>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <div style="font-size:11px; color:#64748b;">SHANNON ENTROPY</div>
+                                <div id="entropyVal" style="font-family:'JetBrains Mono'; font-size:20px; font-weight:700; color:#fff;">0.000</div>
+                            </div>
+                            <div class="col-6">
+                                <div style="font-size:11px; color:#64748b;">STRENGTH STATUS</div>
+                                <div id="strengthStatus" style="font-size:13px; font-weight:700; color:var(--accent-alert); margin-top:6px;">EMPTY BUFFER</div>
+                            </div>
+                        </div>
+                        <div class="entropy-progress"><div id="entropyBar" class="entropy-fill"></div></div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h6 class="font-weight-bold text-light mb-1" style="font-size: 13px;"><span style="color: var(--accent-neon);">●</span> FREQUENCY SPECTRUM MONITOR</h6>
+                        <div style="height: 200px; position: relative;" class="mt-3">
+                            <canvas id="frequencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- DIGITAL MATRIX BACKGROUND EFFECT ---
+const canvas = document.getElementById('matrixCanvas');
+const ctxM = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const matrixChars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function drawMatrix() {
+    ctxM.fillStyle = 'rgba(7, 10, 19, 0.05)';
+    ctxM.fillRect(0, 0, canvas.width, canvas.height);
+    ctxM.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        ctxM.fillStyle = Math.random() > 0.975 ? '#10b981' : '#1e293b';
+        ctxM.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 35);
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// --- CHART.JS ENGINE ---
+const ctx = document.getElementById('frequencyChart').getContext('2d');
+const letters = Array.from({length: 26}, (_, i) => String.fromCharCode(65 + i));
+let freqChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: letters,
+        datasets: [{
+            data: Array(26).fill(0),
+            backgroundColor: 'rgba(99, 102, 241, 0.3)',
+            borderColor: '#6366f1',
+            borderWidth: 1.5,
+            borderRadius: 3
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { grid: { display: false }, ticks: { color: '#475569', font: { size: 9 } } },
+            y: { grid: { color: '#1e293b' }, min: 0, max: 100, ticks: { color: '#475569', font: { size: 9 } } }
+        }
+    }
+});
+
+// --- REAL-TIME DATA SANITIZATION & SHANNON ENTROPY ---
+function updateMetrics(text) {
+    if (!text || text.trim() === "") { resetMetrics(); return; }
+
+    const counts = Array(26).fill(0);
+    let totalLetters = 0;
+    let charMap = {};
+
+    for (let char of text.toUpperCase()) {
+        let code = char.charCodeAt(0);
+        if (code >= 65 && code <= 90) {
+            counts[code - 65]++;
+            totalLetters++;
+        }
+        charMap[char] = (charMap[char] || 0) + 1;
+    }
+
+    // Update Spectrum Chart
+    const percentages = counts.map(count => totalLetters > 0 ? parseFloat(((count / totalLetters) * 100).toFixed(1)) : 0);
+    freqChart.data.datasets[0].data = percentages;
+    freqChart.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.3)';
+    freqChart.data.datasets[0].borderColor = '#10b981';
+    freqChart.update();
+
+    // Calculate Shannon Entropy
+    let entropy = 0;
+    const len = text.length;
+    for (let key in charMap) {
+        let p = charMap[key] / len;
+        entropy -= p * Math.log2(p);
+    }
+    
+    document.getElementById('entropyVal').innerText = entropy.toFixed(3);
+
+    // Assessment Logic
+    let barPercent = (entropy / 4.7) * 100;
+    if (barPercent > 100) barPercent = 100;
+    document.getElementById('entropyBar').style.width = barPercent + '%';
+
+    let statusText = "YẾU (DỄ PHÁ MÃ)";
+    let statusColor = "var(--accent-alert)";
+    if (len >= 8 && entropy >= 2.8) { statusText = "TRUNG BÌNH"; statusColor = "#f59e0b"; }
+    if (len >= 14 && entropy >= 3.6) { statusText = "MÃ HÓA QUÂN ĐỘI"; statusColor = "var(--accent-neon)"; }
+
+    const statusLabel = document.getElementById('strengthStatus');
+    statusLabel.innerText = statusText;
+    statusLabel.style.color = statusColor;
+}
+
+// Global Inputs Event Handling
+document.querySelectorAll('.crypto-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+        if (e.target.classList.contains('playfair-strict-input')) {
+            let cleanText = e.target.value.replace(/[^A-Za-z\s]/g, '');
+            if (e.target.value !== cleanText) {
+                e.target.value = cleanText;
+            }
+        }
+        updateMetrics(e.target.value);
+    });
+});
+
+// Dynamic Real-time Sanitize for Vigenère Key
+document.querySelectorAll('.vigenere-key-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+        let cleanKey = e.target.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+        if (e.target.value !== cleanKey) {
+            e.target.value = cleanKey;
+        }
+    });
+});
+
+// Dynamic Real-time Sanitize for Playfair Key
+document.querySelectorAll('.playfair-key-input').forEach(input => {
+    input.addEventListener('input', (e) => {
+        let cleanKey = e.target.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+        if (e.target.value !== cleanKey) {
+            e.target.value = cleanKey;
+        }
+    });
+});
+
+function resetMetrics() {
+    if(freqChart) {
+        freqChart.data.datasets[0].data = Array(26).fill(0);
+        freqChart.data.datasets[0].backgroundColor = 'rgba(99, 102, 241, 0.4)';
+        freqChart.data.datasets[0].borderColor = '#6366f1';
+        freqChart.update();
+    }
+    document.getElementById('entropyVal').innerText = "0.000";
+    document.getElementById('entropyBar').style.width = "0%";
+    document.getElementById('strengthStatus').innerText = "EMPTY BUFFER";
+    document.getElementById('strengthStatus').style.color = "var(--accent-alert)";
+    document.querySelectorAll('.output-panel').forEach(panel => panel.style.display = 'none');
+}
+
+// --- AJAX CORE ENGINE EXECUTION ---
+function executeCrypto(event, url, outputId, isPlayfair = false) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const outputDiv = document.getElementById(outputId);
+
+    outputDiv.style.display = 'block';
+    outputDiv.style.borderLeft = "4px solid #38bdf8";
+    outputDiv.classList.add('scanning');
+    outputDiv.innerHTML = `<span style="color:#64748b; font-family:'JetBrains Mono'">[PROCESSING] Running pipeline security calculation...</span>`;
+
+    fetch(url, { method: 'POST', body: formData })
+    .then(response => {
+        if (!response.ok) throw new Error('Network response failure');
+        return response.json();
+    })
+    .then(data => {
+        outputDiv.classList.remove('scanning');
+
+        if (data.status === "error") {
+            outputDiv.style.borderLeft = "4px solid var(--accent-alert)";
+            outputDiv.innerHTML = `
+                <div class="mb-1"><span class="output-label text-danger" style="font-weight: bold;">[CRITICAL_ERR]</span></div>
+                <div class="text-white font-weight-500">${data.message}</div>
+            `;
+            return;
+        }
+
+        let htmlContent = `
+            <div class="mb-1"><span class="output-label">Raw Buffer:</span> <span class="text-white">${data.text}</span></div>
+            <div class="mb-1"><span class="output-label">Vector Key:</span> <span class="text-warning">${data.key}</span></div>
+            <div class="mb-2"><span class="output-label">Cipher Array:</span> <span style="color:var(--accent-neon); font-weight:700; font-size:15px;">${data.result}</span></div>
+        `;
+
+        if (isPlayfair && data.matrix) {
+            htmlContent += `
+                <div class="matrix-container">
+                    <div class="output-label mb-2">Algebraic 5x5 Grid Space</div>
+                    <table class="playfair-grid">
+            `;
+            let cellIdx = 0;
+            data.matrix.forEach(row => {
+                htmlContent += '<tr>';
+                row.forEach(cell => { 
+                    let delay = cellIdx * 0.015;
+                    htmlContent += `<td style="animation-delay: ${delay}s">${cell}</td>`; 
+                    cellIdx++;
+                });
+                htmlContent += '</tr>';
+            });
+            htmlContent += `</table></div>`;
+        }
+        outputDiv.innerHTML = htmlContent;
+    })
+    .catch(err => {
+        outputDiv.classList.remove('scanning');
+        outputDiv.style.borderLeft = "4px solid var(--accent-alert)";
+        outputDiv.innerHTML = `<span class="text-danger">[DISCONNECTED] Core cryptographic engine fails to respond. Check API router routing.</span>`;
+    });
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
