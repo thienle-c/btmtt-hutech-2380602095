@@ -9,8 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os
-os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = "../playforms"
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -19,33 +18,36 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(180, 20, 481, 71))
+        self.label.setGeometry(QtCore.QRect(160, 20, 481, 81))
         self.label.setScaledContents(False)
         self.label.setObjectName("label")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit.setGeometry(QtCore.QRect(120, 130, 521, 71))
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit_2.setGeometry(QtCore.QRect(120, 210, 521, 71))
-        self.plainTextEdit_2.setObjectName("plainTextEdit_2")
-        self.plainTextEdit_3 = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.plainTextEdit_3.setGeometry(QtCore.QRect(120, 290, 521, 71))
-        self.plainTextEdit_3.setObjectName("plainTextEdit_3")
+        self.txt_plain_text = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.txt_plain_text.setGeometry(QtCore.QRect(120, 130, 521, 71))
+        self.txt_plain_text.setObjectName("txt_plain_text")
+        self.txt_key = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.txt_key.setGeometry(QtCore.QRect(120, 210, 521, 71))
+        self.txt_key.setObjectName("txt_key")
+        self.txt_cipher_text = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.txt_cipher_text.setGeometry(QtCore.QRect(120, 290, 521, 71))
+        self.txt_cipher_text.setObjectName("txt_cipher_text")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(30, 130, 47, 13))
+        self.label_2.setGeometry(QtCore.QRect(30, 130, 61, 16))
         self.label_2.setObjectName("label_2")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(30, 210, 47, 13))
+        self.label_3.setGeometry(QtCore.QRect(30, 210, 61, 16))
         self.label_3.setObjectName("label_3")
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
-        self.label_4.setGeometry(QtCore.QRect(30, 290, 61, 16))
+        self.label_4.setGeometry(QtCore.QRect(30, 290, 71, 16))
         self.label_4.setObjectName("label_4")
-        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(220, 430, 75, 23))
-        self.pushButton.setObjectName("pushButton")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(550, 430, 75, 23))
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.btn_encrypt = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_encrypt.setGeometry(QtCore.QRect(220, 430, 100, 30))
+        self.btn_encrypt.setObjectName("btn_encrypt")
+        self.btn_decrypt = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_decrypt.setGeometry(QtCore.QRect(520, 430, 100, 30))
+        self.btn_decrypt.setObjectName("btn_decrypt")
+        self.label_student_info = QtWidgets.QLabel(self.centralwidget)
+        self.label_student_info.setGeometry(QtCore.QRect(30, 510, 400, 30))
+        self.label_student_info.setObjectName("label_student_info")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -61,12 +63,13 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:48pt;\">CAESAR CIPHER</span></p><p><span style=\" font-size:48pt;\"><br/></span></p></body></html>"))
+        self.label.setText(_translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-size:48pt; font-weight:600;\">CAESAR CIPHER</span></p></body></html>"))
         self.label_2.setText(_translate("MainWindow", "plain text:"))
         self.label_3.setText(_translate("MainWindow", "key:"))
         self.label_4.setText(_translate("MainWindow", "Ciphertext :"))
-        self.pushButton.setText(_translate("MainWindow", "Encrypt"))
-        self.pushButton_2.setText(_translate("MainWindow", "decrypt"))
+        self.btn_encrypt.setText(_translate("MainWindow", "Encrypt"))
+        self.btn_decrypt.setText(_translate("MainWindow", "decrypt"))
+        self.label_student_info.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:11pt; font-weight:600; color:#c0392b;\">Sinh viên: Lê Minh Thiên - MSSV: 2380602095</span></p></body></html>"))
 
 
 if __name__ == "__main__":
